@@ -21,4 +21,8 @@ from event_manager import views as v
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('register/', v.SignUpView.as_view()),
+    path('users/', v.UserListView.as_view()),
+    path('users/<int:pk>/', v.UserRetreiveDeleteView.as_view()),
+    path('events/', v.EventListCreateView.as_view()),
+    path('events/<int:pk>/', v.EventRetrieveUpdateDeleteView.as_view()),
 ]

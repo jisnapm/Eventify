@@ -3,7 +3,57 @@ POST http://127.0.0.1:8000/register/
 Content-Type: application/json
 
 {
-    "username": "jisna",
-    "email": "jisna@gmail.com",
-    "password": "jisna@123"
+    "username": "saira",
+    "email": "saira@gmail.com",
+    "password": "saira@123"
 }
+
+###
+GET http://127.0.0.1:8000/users/
+Accept: application/json
+
+
+###
+DELETE http://127.0.0.1:8000/users/1/
+Accept: application/json
+
+
+###
+GET http://127.0.0.1:8000/events/
+Accept: application/json
+Authorization: Basic jisna:jisna@123
+
+
+###
+POST http://127.0.0.1:8000/events/
+Content-Type: application/json
+Authorization: Basic saira:saira@123
+
+{
+    "event_name": "CodeStorm Hackathon",
+    "description": "A 24-hour coding competition for college students.",
+    "category": "Hackathon",
+    "venue": "Thrissur",
+    "event_date": "2026-12-25",
+    "start_time": "09:00:00",
+    "end_time": "09:00:00",
+    "status": "upcoming"
+}
+
+
+###
+PUT http://127.0.0.1:8000/events/3/
+Content-Type: application/json
+Authorization: Basic saira:saira@123
+
+{
+    "event_name": "Future of Artificial Intelligence",
+    "description": "An informative seminar about generative AI, machine learning and automation.",
+    "category": "Seminar",
+    "venue": "Calicut",
+    "event_date": "2027-01-10",
+    "start_time": "10:00:00",
+    "end_time": "13:00:00",
+    "status": "upcoming"
+}
+
