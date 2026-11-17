@@ -22,3 +22,14 @@ class EventDb(models.Model):
 
     def __str__(self):
         return self.event_name
+
+class EventMemberDb(models.Model):
+    event = models.ForeignKey(EventDb, on_delete=models.CASCADE, related_name='event_member')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='event_membership')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['event', 'user'], name='unique_event_member')]
+
+    def __str__(self):
+        return f"{self.user.username} - {self.event.event_name}"

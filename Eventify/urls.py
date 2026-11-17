@@ -25,4 +25,7 @@ urlpatterns = [
     path('users/<int:pk>/', v.UserRetreiveDeleteView.as_view()),
     path('events/', v.EventListCreateView.as_view()),
     path('events/<int:pk>/', v.EventRetrieveUpdateDeleteView.as_view()),
+    path('events/<int:e_id>/members/', v.EventMembersListCreateView.as_view()),
+    path('events/<int:e_id>/members/<int:m_id>/', v.EventMemberDeleteView.as_view()),
+
 ]

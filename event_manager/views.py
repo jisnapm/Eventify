@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from event_manager.models import EventDb
 from event_manager.serializers import *
 from rest_framework import authentication, permissions
+from rest_framework.exceptions import PermissionDenied
+from event_manager.permissions import OwnerOnly
 
 # Create your views here.
 class SignUpView(APIView):
@@ -17,12 +19,18 @@ class SignUpView(APIView):
         return Response(s_instance.errors)
 
 class UserListView(APIView):
+    authentication_classes = [authentication.BasicAuthentication]
+    permission_classes = [permissions.IsAdminUser]
+
     def get(self, request):
         qs = User.objects.all()
         s_instance = UserSerializer(qs, many= True)
         return Response(data= s_instance.data)
 
 class UserRetreiveDeleteView(APIView):
+    authentication_classes = [authentication.BasicAuthentication]
+    permission_classes = [permissions.IsAdminUser]
+
     def get(self, request, pk):
         qs = get_object_or_404(User, id= pk)
         s_instance = UserSerializer(qs)
@@ -54,7 +62,7 @@ class EventListCreateView(APIView):
 
 class EventRetrieveUpdateDeleteView(APIView):
     authentication_classes = [authentication.BasicAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [OwnerOnly]
 
     def get(self, request, pk):
         event_object = get_object_or_404(EventDb, id=pk)
@@ -83,3 +91,49 @@ class EventRetrieveUpdateDeleteView(APIView):
             raise serializers.ValidationError("Access Denied")     
         event_obj.delete()
         return Response(data= {"message":"Event Deleted!"})
+
+class EventMembersListCreateView(APIView):
+    authentication_classes = [authentication.BasicAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, e_id):
+        event_obj = get_object_or_404(EventDb, id=e_id)
+
+        is_owner = event_obj.created_by == request.user
+        is_member = EventMemberDb.objects.filter(event=event_obj, user=request.user)
+
+        if not (is_owner or is_member):
+            raise PermissionDenied("You are not allowed to access this event")
+
+        members = EventMemberDb.objects.filter(event=event_obj)
+        s_instance = EventMemberSerializer(members, many=True)
+
+        return Response(data=s_instance.data, status=200)
+
+    def post(self, request, e_id):
+        event_obj = get_object_or_404(EventDb, id=e_id)
+        is_owner = event_obj.created_by == request.user
+
+        if not is_owner:
+            raise PermissionDenied("Only owners can add new members")
+
+        form_data = request.data
+        s_instance = EventMemberSerializer(data=form_data, context={'event':event_obj})
+
+        if s_instance.is_valid():
+            s_instance.save()
+            return Response(data={'message':'Member added successfully!'})
+        return Response(data= s_instance.errors)
+
+class EventMemberDeleteView(APIView):
+    authentication_classes = [authentication.BasicAuthentication]
+    permission_classes = [OwnerOnly]
+
+    def delete(self, request, e_id, m_id):
+        event_obj = get_object_or_404(EventDb, id=e_id)
+        if event_obj.created_by != request.user:
+            raise PermissionDenied("Only owners can remove members")
+
+        member_obj = get_object_or_404(EventMemberDb, id=m_id, event=event_obj)
+        member_obj.delete()
+        return Response(data= {'message':'Member deleted'})

@@ -3,14 +3,15 @@ POST http://127.0.0.1:8000/register/
 Content-Type: application/json
 
 {
-    "username": "saira",
-    "email": "saira@gmail.com",
-    "password": "saira@123"
+    "username": "alaka",
+    "email": "alaka@gmail.com",
+    "password": "alaka@123"
 }
 
 ###
 GET http://127.0.0.1:8000/users/
 Accept: application/json
+Authorization: Basic jisnapm:Jisna@123
 
 
 ###
@@ -23,6 +24,11 @@ GET http://127.0.0.1:8000/events/
 Accept: application/json
 Authorization: Basic jisna:jisna@123
 
+
+###
+GET http://127.0.0.1:8000/events/
+Accept: application/json
+Authorization: Basic saira:saira@123
 
 ###
 POST http://127.0.0.1:8000/events/
@@ -57,3 +63,40 @@ Authorization: Basic saira:saira@123
     "status": "upcoming"
 }
 
+
+###
+DELETE  http://127.0.0.1:8000/events/5/
+Authorization: Basic saira:saira@123
+
+###
+GET http://127.0.0.1:8000/events/3/members/
+Accept: application/json
+Authorization: Basic saira:saira@123
+
+###
+POST http://127.0.0.1:8000/events/3/members/
+Content-Type: application/json
+Authorization: Basic saira:saira@123
+
+{
+    "username":"manu"
+}
+
+###
+GET http://127.0.0.1:8000/events/1/members/
+Accept: application/json
+Authorization: Basic jisna:jisna@123
+
+###
+POST http://127.0.0.1:8000/events/1/members/
+Content-Type: application/json
+Authorization: Basic jisna:jisna@123
+
+{
+    "username":"jismi"
+}
+
+###
+DELETE http://127.0.0.1:8000/events/1/members/5/
+Accept: application/json
+Authorization: Basic jisna:jisna@123
